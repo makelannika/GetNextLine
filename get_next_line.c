@@ -13,9 +13,6 @@
 #include <stdio.h>
 #include "get_next_line.h"
 
-void    *ft_calloc(size_t count, size_t size);
-void    ft_bzero(void *s, size_t n);
-
 char	*get_next_line(int fd)
 {
 	size_t		i;
@@ -26,7 +23,7 @@ char	*get_next_line(int fd)
 	char		buffer[BUFFER_SIZE + 1];
 
 	i = 0;
-	if (fd < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, buffer, 0) < 0)
 		return (NULL);
 	if (!text_read)
 	{
@@ -35,13 +32,8 @@ char	*get_next_line(int fd)
 			return (NULL);
 	}
 	// read file until a complete line is read or end of line is reached
-	while (!ft_strchr(text_read, '\n'))
+	while ((!ft_strchr(text_read, '\n')) && (bytes_read = read(fd, buffer, BUFFER_SIZE)))
 	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read == -1)
-			return (NULL);
-		if (bytes_read == 0)
-			break;
 		buffer[bytes_read] = '\0';
 		temp = text_read;
 		text_read = ft_strjoin(text_read, buffer);
@@ -49,14 +41,23 @@ char	*get_next_line(int fd)
 		if (!text_read)
 			return (NULL);
 	}
-	// get a line from the text read
+	// if reading the file failed, free text_read and quit
+	if (!bytes_read)
+	{
+		free(text_read);
+		return (NULL);
+	}
+	// if new line was found or end of file reached, get a line from the text read
 	while (text_read[i] && text_read[i] != '\n')
 		i++;
 	if (text_read[i] == '\n')
 		i++;
 	line = ft_substr(text_read, 0, i);
 	if (!line)
+	{
+		free(text_read);
 		return (NULL);
+	}
 	// remove line to be returned from the text read
 	temp = text_read;
 	text_read = ft_substr(text_read, i, ft_strlen(text_read) - i);
@@ -81,24 +82,38 @@ void	*ft_calloc(size_t count, size_t size)
 
 void	ft_bzero(void *s, size_t n)
 {
-	size_t		i;
-	char		*str;
-
-	if (n == 0)
-		return ;
-	i = 0;
-	str = s;
-	while (i < n)
+	while (n > 0)
 	{
-		str[i] = 0;
-		i ++;
+		*((char *)s + n - 1) = 0;
+		n--;
 	}
+	return ;
 }
 
-int main()
+char	*ft_strchr(const char *s, int c)
 {
-	fd = open(file, O_RDONLY);
+	size_t	length;
+	size_t	i;
 
-	printf(get_next_line(fd));
+	i = 0;
+	length = ft_strlen(s);
+	while (i <= length)
+		if (s[i] != c)
+			i++;
+	else
+		return ((char *)&s[i]);
 	return (0);
 }
+/*
+int main()
+{
+	int	fd;
+	char	*line;
+
+	fd = open("file.txt", O_RDONLY);
+	while ((line = get_next_line(fd)))
+	{
+		printf("%s", line);
+	}
+	return (0);
+}*/

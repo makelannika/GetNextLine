@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:32:38 by amakela           #+#    #+#             */
-/*   Updated: 2023/12/13 20:14:19 by amakela          ###   ########.fr       */
+/*   Updated: 2023/12/19 18:24:41 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ char	*get_next_line(int fd)
 		if (!text_read)
 			return (NULL);
 	}
-	// read file until a complete line is read or end of line is reached
 	while ((!ft_strchr(text_read, '\n')) && (bytes_read = read(fd, buffer, BUFFER_SIZE)))
 	{
 		buffer[bytes_read] = '\0';
@@ -41,24 +40,23 @@ char	*get_next_line(int fd)
 		if (!text_read)
 			return (NULL);
 	}
-	// if reading the file failed, free text_read and quit
-	if (!bytes_read)
+	if (bytes_read < 0)
 	{
 		free(text_read);
 		return (NULL);
 	}
-	// if new line was found or end of file reached, get a line from the text read
-	while (text_read[i] && text_read[i] != '\n')
+	while (text_read[i] || text_read[i] != '\n')
 		i++;
 	if (text_read[i] == '\n')
 		i++;
 	line = ft_substr(text_read, 0, i);
-	if (!line)
+	if (!line && bytes_read == 0)
 	{
 		free(text_read);
-		return (NULL);
+		if (!line)
+			return (NULL);
+		return (line);
 	}
-	// remove line to be returned from the text read
 	temp = text_read;
 	text_read = ft_substr(text_read, i, ft_strlen(text_read) - i);
 	free(temp);

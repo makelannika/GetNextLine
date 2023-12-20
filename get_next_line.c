@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:32:38 by amakela           #+#    #+#             */
-/*   Updated: 2023/12/19 18:24:41 by amakela          ###   ########.fr       */
+/*   Updated: 2023/12/20 16:23:49 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!text_read)
 	{
-		text_read = ft_calloc(1, 1);
+		text_read = (char *)ft_calloc(1, 1);
 		if (!text_read)
 			return (NULL);
 	}
@@ -45,15 +45,15 @@ char	*get_next_line(int fd)
 		free(text_read);
 		return (NULL);
 	}
-	while (text_read[i] || text_read[i] != '\n')
+	while (text_read[i] && text_read[i] != '\n')
 		i++;
 	if (text_read[i] == '\n')
 		i++;
 	line = ft_substr(text_read, 0, i);
-	if (!line && bytes_read == 0)
+	if (!line || bytes_read == 0)
 	{
 		free(text_read);
-		if (!line)
+		if (!ft_strlen(line))
 			return (NULL);
 		return (line);
 	}

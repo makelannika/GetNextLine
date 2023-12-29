@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/30 12:34:14 by amakela           #+#    #+#             */
-/*   Updated: 2023/12/29 19:49:52 by amakela          ###   ########.fr       */
+/*   Created: 2023/12/29 15:28:16 by amakela           #+#    #+#             */
+/*   Updated: 2023/12/29 19:46:22 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 6
+# endif
+
+# ifndef MAX_FD
+#  define MAX_FD 4000
 # endif
 
 # include <stdlib.h>

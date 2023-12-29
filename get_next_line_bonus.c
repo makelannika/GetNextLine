@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/30 12:32:38 by amakela           #+#    #+#             */
-/*   Updated: 2023/12/29 20:31:16 by amakela          ###   ########.fr       */
+/*   Created: 2023/12/29 15:27:35 by amakela           #+#    #+#             */
+/*   Updated: 2023/12/29 20:16:19 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include <stdio.h>
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 ssize_t	read_file(int fd, char **text_read, ssize_t bytes_read);
 char	*next_line(char **text_read, ssize_t bytes_read, char *line);
@@ -21,25 +22,25 @@ char	*get_next_line(int fd)
 {
 	char		*line;
 	ssize_t		bytes_read;
-	static char	*text_read;
+	static char	*text_read[MAX_FD];
 
 	line = 0;
 	bytes_read = 1;
-	if (!text_read)
-		text_read = (char *)ft_calloc(1, 1);
-	if (!text_read)
+	if (!text_read[fd])
+		text_read[fd] = (char *)ft_calloc(1, 1);
+	if (!text_read[fd])
 		return (NULL);
 	if (fd < 0 || read(fd, 0, 0) < 0)
 	{
-		freeptr(&text_read);
+		freeptr(&text_read[fd]);
 		return (NULL);
 	}
-	bytes_read = read_file(fd, &text_read, bytes_read);
+	bytes_read = read_file(fd, &text_read[fd], bytes_read);
 	if (bytes_read == -1)
 		return (NULL);
-	line = next_line(&text_read, bytes_read, line);
+	line = next_line(&text_read[fd], bytes_read, line);
 	if (!line || bytes_read == 0)
-		freeptr(&text_read);
+		freeptr(&text_read[fd]);
 	if (!line)
 		return (NULL);
 	return (line);
@@ -58,7 +59,7 @@ ssize_t	read_file(int fd, char **text_read, ssize_t bytes_read)
 		buffer[bytes_read] = '\0';
 		temp = *text_read;
 		*text_read = ft_strjoin(*text_read, buffer);
-		free(temp);
+		freeptr(&temp);
 		if (!*text_read)
 			return (-1);
 	}
@@ -87,7 +88,7 @@ char	*next_line(char **text_read, ssize_t bytes_read, char *line)
 		return (line);
 	temp = *text_read;
 	*text_read = ft_substr(*text_read, i, ft_strlen(*text_read) - i);
-	free(temp);
+	freeptr(&temp);
 	if (!*text_read)
 	{
 		freeptr(&line);
